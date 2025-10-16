@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .snap-x-mandatory { scroll-snap-type: x mandatory; }
+  .snap-center { scroll-snap-align: center; }
+}
