@@ -44,14 +44,10 @@ export default function Navbar({ onOpenCart }: NavbarProps) {
           </li>
           <li>
             <NavLink to="/new-arrivals" className={isActive}>
-              New Arrivals
+              Products
             </NavLink>
           </li>
-          <li>
-            <NavLink to="/packages" className={isActive}>
-              Packages
-            </NavLink>
-          </li>
+
 
           {user ? (
             <>
@@ -119,18 +115,10 @@ export default function Navbar({ onOpenCart }: NavbarProps) {
                 className={isActive}
                 onClick={() => setOpen(false)}
               >
-                New Arrivals
+                Products
               </NavLink>
             </li>
-            <li>
-              <NavLink
-                to="/packages"
-                className={isActive}
-                onClick={() => setOpen(false)}
-              >
-                Packages
-              </NavLink>
-            </li>
+
 
             {user ? (
               <>

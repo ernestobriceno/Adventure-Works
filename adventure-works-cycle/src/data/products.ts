@@ -1,9 +1,122 @@
-export type Product = { id:string; name:string; price:number; brand:string; image:string; tag?:"new"|"deal"; rating?:number; stock?:"ok"|"low" };
+// Tipado de producto
+export type Product = {
+  id: string;
+  name: string;
+  price: number;
+  brand: string;
+  image: string;
+  tag?: "new" | "deal";
+  rating?: number;
+  stock?: "ok" | "low" | "out";
+  category: "mountain" | "hybrid" | "bmx" | "electric" ;
+};
+
+// Lista de productos
 export const products: Product[] = [
-{ id:"1", name:"Merida", price:600.5, brand:"MERIDA", image:"https://images.unsplash.com/photo-1518659526055-c9c1a23309ff?q=80&w=1200&auto=format&fit=crop", tag:"new", rating:5, stock:"low" },
-{ id:"2", name:"Trek", price:600.5, brand:"TREK", image:"https://images.unsplash.com/photo-1498654200943-1088dd4438ae?q=80&w=1200&auto=format&fit=crop", rating:5 },
-{ id:"3", name:"Trek", price:1050, brand:"TREK", image:"https://images.unsplash.com/photo-1517167685280-595076a44a5d?q=80&w=1200&auto=format&fit=crop", rating:5 },
-{ id:"4", name:"Trek", price:2550.5, brand:"TREK", image:"https://images.unsplash.com/photo-1520992428834-ce58b4c2d2b2?q=80&w=1200&auto=format&fit=crop", rating:5, stock:"low" },
-{ id:"5", name:"Haro", price:600.5, brand:"HARO", image:"https://images.unsplash.com/photo-1495105787522-5334e3ffa0ef?q=80&w=1200&auto=format&fit=crop", rating:5 },
-{ id:"6", name:"Santa Cruz", price:1050, brand:"SANTA CRUZ", image:"https://images.unsplash.com/photo-1460353581641-37baddab0fa2?q=80&w=1200&auto=format&fit=crop", rating:5 },
+  {
+    id: "1",
+    name: "Galleze Hybrid",
+    price: 7000.0,
+    brand: "Galleze",
+    image: "/gallezehybrid.jpg",
+    tag: "new",
+    rating: 5,
+    stock: "low",
+    category: "hybrid",
+  },
+  {
+    id: "2",
+    name: "Merida",
+    price: 600.5,
+    brand: "MERIDA",
+    image: "/merida.png",
+    rating: 5,
+    stock: "out",
+    category: "mountain",
+  },
+  {
+    id: "3",
+    name: "Maxxis",
+    price: 6050.0,
+    brand: "Maxxis",
+    image: "/maxxis.png",
+    rating: 5,
+    tag: "deal",
+    stock: "ok",
+    category: "mountain",
+  },
+  {
+    id: "4",
+    name: "BMX Swift",
+    price: 6050.0,
+    brand: "BMX",
+    image: "/bmxswft.png",
+    rating: 5,
+    stock: "ok",
+    category: "bmx",
+  },
+  {
+    id: "5",
+    name: "E-Bike",
+    price: 600.5,
+    brand: "Enguie",
+    image: "/enguiee-bike.png",
+    rating: 5,
+    tag: "deal",
+    stock: "ok",
+    category: "electric",
+  },
+  {
+    id: "6",
+    name: "Trek Classic",
+    price: 1050,
+    brand: "Trek",
+    image: "/treknormal.png",
+    rating: 5,
+    tag: "deal",
+    stock: "out",
+    category: "mountain",
+  },
+  {
+    id: "7",
+    name: "Felt MBK",
+    price: 2500,
+    brand: "FELT",
+    image: "/feltmbk.png",
+    tag: "new",
+    rating: 5,
+    stock: "low",
+    category: "mountain",
+  },
+  {
+    id: "8",
+    name: "Sharo Bike",
+    price: 600.5,
+    brand: "Sharo",
+    image: "/sharobike.png",
+    rating: 5,
+    stock: "ok",
+    category: "hybrid",
+  },
+  {
+    id: "9",
+    name: "Trek MBK",
+    price: 1050,
+    brand: "Trek",
+    image: "/trekmbk.png",
+    rating: 5,
+    tag: "deal",
+    stock: "ok",
+    category: "mountain",
+  },
+  {
+    id: "10",
+    name: "Polygon",
+    price: 2550.5,
+    brand: "MERIDA",
+    image: "/meridapolygon.png",
+    rating: 5,
+    stock: "low",
+    category: "mountain",
+  },
 ];

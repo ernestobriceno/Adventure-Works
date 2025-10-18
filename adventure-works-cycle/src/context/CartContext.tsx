@@ -1,24 +1,128 @@
-import React, { createContext, useContext, useMemo } from "react";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import React, { createContext, useContext, useEffect, useMemo, useReducer } from "react";
 import type { Product } from "@/data/products";
 
+/** Item del carrito: guardamos el Product completo para mantener tag/category, etc. */
+export type CartItem = { product: Product; qty: number };
 
-export type CartItem = { id: string; name: string; price: number; image: string; qty: number };
+type CartState = { items: CartItem[] };
 
+type Action =
+  | { type: "ADD"; product: Product; qty?: number }
+  | { type: "INC"; id: string }
+  | { type: "DEC"; id: string }
+  | { type: "REMOVE"; id: string }
+  | { type: "CLEAR" };
 
-type CartCtx = { items: CartItem[]; add:(p:Product, qty?:number)=>void; remove:(id:string)=>void; setQty:(id:string,qty:number)=>void; clear:()=>void; count:number; subtotal:number };
-const Ctx = createContext<CartCtx | null>(null);
+const CartContext = createContext<{
+  items: CartItem[];
+  add: (product: Product, qty?: number) => void;
+  inc: (id: string) => void;
+  dec: (id: string) => void;
+  remove: (id: string) => void;
+  clear: () => void;
+  subtotal: number;
+  count: number;
+} | null>(null);
 
+/** Precio unitario con descuento si el producto está en DEAL (-25%) */
+export function getUnitPrice(p: Product): number {
+  return p.tag === "deal" ? +(p.price * 0.75).toFixed(2) : p.price;
+}
 
-export const CartProvider: React.FC<{children:React.ReactNode}> = ({ children }) => {
-const [items, setItems] = useLocalStorage<CartItem[]>("awc:cart", []);
-const add:CartCtx["add"]=(p,qty=1)=>setItems(prev=>{ const i=prev.find(x=>x.id===p.id); return i? prev.map(x=>x.id===p.id?{...x,qty:x.qty+qty}:x):[...prev,{id:p.id,name:p.name,price:p.price,image:p.image,qty}]});
-const remove=(id:string)=>setItems(prev=>prev.filter(x=>x.id!==id));
-const setQty=(id:string,qty:number)=>setItems(prev=>prev.map(x=>x.id===id?{...x,qty}:x));
-const clear=()=>setItems([]);
-const {count,subtotal}=useMemo(()=>({count:items.reduce((a,b)=>a+b.qty,0),subtotal:items.reduce((a,b)=>a+b.qty*b.price,0)}),[items]);
-return <Ctx.Provider value={{ items, add, remove, setQty, clear, count, subtotal }}>{children}</Ctx.Provider>;
-};
+function reducer(state: CartState, action: Action): CartState {
+  switch (action.type) {
+    case "ADD": {
+      const qty = action.qty ?? 1;
+      const idx = state.items.findIndex((it) => it.product.id === action.product.id);
+      if (idx >= 0) {
+        const items = [...state.items];
+        items[idx] = { ...items[idx], qty: items[idx].qty + qty };
+        return { items };
+      }
+      return { items: [...state.items, { product: action.product, qty }] };
+    }
+    case "INC": {
+      return {
+        items: state.items.map((it) =>
+          it.product.id === action.id ? { ...it, qty: it.qty + 1 } : it
+        ),
+      };
+    }
+    case "DEC": {
+      return {
+        items: state.items
+          .map((it) =>
+            it.product.id === action.id ? { ...it, qty: it.qty - 1 } : it
+          )
+          .filter((it) => it.qty > 0),
+      };
+    }
+    case "REMOVE": {
+      return { items: state.items.filter((it) => it.product.id !== action.id) };
+    }
+    case "CLEAR": {
+      return { items: [] };
+    }
+    default:
+      return state;
+  }
+}
 
+const STORAGE_KEY = "cart.v1";
 
-export const useCart=()=>{ const c=useContext(Ctx); if(!c) throw new Error("useCart must be used within CartProvider"); return c; };
+/** Estado con persistencia en localStorage */
+function usePersistedCart(): [CartState, React.Dispatch<Action>] {
+  const [state, dispatch] = useReducer(reducer, undefined!, () => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw) as CartState;
+    } catch {}
+    return { items: [] };
+  });
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }, [state]);
+
+  return [state, dispatch];
+}
+
+export function CartProvider({ children }: { children: React.ReactNode }) {
+  const [state, dispatch] = usePersistedCart();
+
+  const subtotal = useMemo(
+    () =>
+      state.items.reduce(
+        (acc, it) => acc + getUnitPrice(it.product) * it.qty,
+        0
+      ),
+    [state.items]
+  );
+
+  const count = useMemo(
+    () => state.items.reduce((acc, it) => acc + it.qty, 0),
+    [state.items]
+  );
+
+  const value = useMemo(
+    () => ({
+      items: state.items,
+      add: (product: Product, qty?: number) => dispatch({ type: "ADD", product, qty }),
+      inc: (id: string) => dispatch({ type: "INC", id }),
+      dec: (id: string) => dispatch({ type: "DEC", id }),
+      remove: (id: string) => dispatch({ type: "REMOVE", id }),
+      clear: () => dispatch({ type: "CLEAR" }),
+      subtotal,
+      count,
+    }),
+    [state.items, subtotal, count]
+  );
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+}
+
+export function useCart() {
+  const ctx = useContext(CartContext);
+  if (!ctx) throw new Error("useCart must be used within a CartProvider");
+  return ctx;
+}

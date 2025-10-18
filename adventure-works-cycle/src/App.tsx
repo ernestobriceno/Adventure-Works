@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
-
 import Home from "@/pages/Home";
 import DealsPage from "@/pages/DealsPage";
 import NewArrivalsPage from "@/pages/NewArrivalsPage";
@@ -11,15 +9,16 @@ import Packages from "@/pages/Packages";
 import SignIn from "@/pages/SignIn";
 import SignUp from "@/pages/SignUp";
 import ForgotPassword from "@/pages/ForgotPassword";
+import Footer from "@/components/Footer";
 
 export default function App() {
-  const [cartOpen, setCartOpen] = useState(false);
+  const [openCart, setOpenCart] = useState(false);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white text-gray-900">
-      <Navbar onOpenCart={() => setCartOpen(true)} />
+    <div className="min-h-screen bg-neutral-100 text-neutral-900 flex flex-col">
+      <Navbar onOpenCart={() => setOpenCart(true)} />
 
-      <main className="flex-grow">
+      <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/deals" element={<DealsPage />} />
@@ -28,12 +27,13 @@ export default function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="*" element={<Home />} />
         </Routes>
       </main>
 
       <Footer />
-      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+
+      {/* Drawer del carrito */}
+      <CartDrawer open={openCart} onClose={() => setOpenCart(false)} />
     </div>
   );
 }

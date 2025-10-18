@@ -4,3 +4,6 @@
   .snap-x-mandatory { scroll-snap-type: x mandatory; }
   .snap-center { scroll-snap-align: center; }
 }
+
+html, body, #root { height: 100%; }
+body { @apply bg-neutral-100; }
