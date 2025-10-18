@@ -9,6 +9,8 @@ import Packages from "@/pages/Packages";
 import SignIn from "@/pages/SignIn";
 import SignUp from "@/pages/SignUp";
 import ForgotPassword from "@/pages/ForgotPassword";
+import Checkout from "@/pages/Checkout";
+import OrderSuccess from "@/pages/Ordersuccess";
 import Footer from "@/components/Footer";
 
 export default function App() {
@@ -27,12 +29,13 @@ export default function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order/:id" element={<OrderSuccess />} />
         </Routes>
       </main>
 
       <Footer />
 
-      {/* Drawer del carrito */}
       <CartDrawer open={openCart} onClose={() => setOpenCart(false)} />
     </div>
   );
