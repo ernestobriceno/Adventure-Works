@@ -1,10 +1,11 @@
 import { FormEvent, useState } from "react";
-import { signUpEmail } from "@/firebase";
+import { useAuth } from "@/context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 
 
 export default function SignUp(){
 const nav=useNavigate();
+const { signup } = useAuth();
 const [name,setName]=useState("");
 const [email,setEmail]=useState("");
 const [password,setPassword]=useState("");
@@ -13,7 +14,7 @@ const [err,setErr]=useState<string|undefined>();
 
 async function handle(e:FormEvent){
 e.preventDefault(); setErr(undefined);
-try{ await signUpEmail(email,password,name); nav("/"); }catch(e:any){ setErr(e.message||"Error"); }
+try{ await signup(email, password, name); nav("/"); }catch(e:any){ setErr(e.message||"Error"); }
 }
 
 

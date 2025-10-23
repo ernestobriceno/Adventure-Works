@@ -1,12 +1,16 @@
 import { FormEvent, useState } from "react";
-import { resetPassword } from "@/firebase";
 
 
 export default function ForgotPassword(){
 const [email,setEmail]=useState("");
 const [done,setDone]=useState(false);
 const [err,setErr]=useState<string|undefined>();
-async function handle(e:FormEvent){ e.preventDefault(); setErr(undefined); try{ await resetPassword(email); setDone(true);}catch(e:any){ setErr(e.message||"Error"); } }
+async function handle(e:FormEvent){ 
+  e.preventDefault(); 
+  setErr(undefined); 
+  // Password reset functionality not yet implemented in API
+  setErr("Password reset functionality is not yet available. Please contact support."); 
+}
 return (
 <section className="mx-auto max-w-md px-4 py-10">
 <h2 className="text-3xl font-extrabold">Reset Password</h2>

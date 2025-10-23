@@ -1,0 +1,26 @@
+[
+  {
+    "id": "admin-user-001",
+    "email": "admin@adventureworks.com",
+    "name": "Administrador",
+    "hash": "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi",
+    "isAdmin": true,
+    "createdAt": 1698000000000
+  },
+  {
+    "id": "6il5-timUfn4S6cVq51Xb",
+    "email": "danielrivas0018@gmail.com",
+    "name": "daniel",
+    "hash": "$2a$10$eLQTCIU4FF0YJSYmiiLeNOd0o1Rsg5S1B9fNraJq4ksU7iof1d/r2",
+    "isAdmin": false,
+    "createdAt": 1761112313224
+  },
+  {
+    "id": "i5bba7BqfPpY5hkn0kpkj",
+    "email": "daniel@gmail.com",
+    "name": "daniel",
+    "hash": "$2a$10$sjelBbb3JxpJ/k2H3vlaE.Y1ZkkdX4ksBKmxployllFe66NHRh6d2",
+    "isAdmin": false,
+    "createdAt": 1761112489640
+  }
+]

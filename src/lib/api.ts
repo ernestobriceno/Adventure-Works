@@ -13,6 +13,9 @@ export async function fetchJson<T>(
   url: string,
   options: RequestInit = {}
 ): Promise<T> {
+  // Si la URL es relativa, agregar la URL base de la API
+  const fullUrl = url.startsWith('http') ? url : `${API_URL}${url}`;
+  
   // Combinamos los encabezados asegurando compatibilidad con HeadersInit
   const headers: HeadersInit = {
     "Content-Type": "application/json",
@@ -20,7 +23,7 @@ export async function fetchJson<T>(
     ...authHeader(),
   };
 
-  const res = await fetch(url, {
+  const res = await fetch(fullUrl, {
     ...options,
     headers,
   });

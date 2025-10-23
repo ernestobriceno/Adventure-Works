@@ -1,29 +1,21 @@
 import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SignIn() {
   const nav = useNavigate();
+  const { signin, GoogleButton } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
-
-  const API = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
 
   async function handleEmail(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
     setErr(undefined);
     try {
-      const r = await fetch(`${API}/api/auth/signin`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await r.json();
-      if (!r.ok) throw new Error(data.error || "Sign in failed");
-      localStorage.setItem("token", data.token);
+      await signin(email, password);
       nav("/");
     } catch (e: any) {
       setErr(e.message || "Error");
@@ -36,14 +28,7 @@ export default function SignIn() {
     setLoading(true);
     setErr(undefined);
     try {
-      const r = await fetch(`${API}/api/auth/google`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idToken }),
-      });
-      const data = await r.json();
-      if (!r.ok) throw new Error(data.error || "Google login failed");
-      localStorage.setItem("token", data.token);
+      await signin(idToken, undefined, true);
       nav("/");
     } catch (e: any) {
       setErr(e.message || "Error");

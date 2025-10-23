@@ -9,7 +9,13 @@ import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 import { API_URL, fetchJson } from "@/lib/api";
 
 // ---------------------- Tipos ----------------------
-type User = { id: string; email: string; name?: string };
+type User = { 
+  id: string; 
+  email: string; 
+  name?: string;
+  isAdmin?: boolean;
+  createdAt?: string;
+};
 
 type AuthCtx = {
   user: User | null;

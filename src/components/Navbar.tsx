@@ -9,7 +9,7 @@ type NavbarProps = {
 
 export default function Navbar({ onOpenCart }: NavbarProps) {
   const { count } = useCart();
-  const { user, signOut } = useAuth();
+  const { user, signout } = useAuth();
   const [open, setOpen] = useState(false);
 
   const link =
@@ -54,8 +54,15 @@ export default function Navbar({ onOpenCart }: NavbarProps) {
               <li className="text-sm text-neutral-500 px-2">
                 Hi, {user.email?.split("@")[0]}
               </li>
+              {user.isAdmin && (
+                <li>
+                  <NavLink to="/admin" className={isActive}>
+                    Admin
+                  </NavLink>
+                </li>
+              )}
               <li>
-                <button onClick={signOut} className={link}>
+                <button onClick={signout} className={link}>
                   Sign out
                 </button>
               </li>
@@ -125,11 +132,22 @@ export default function Navbar({ onOpenCart }: NavbarProps) {
                 <li className="px-3 py-2 text-sm text-neutral-500">
                   Hi, {user.email?.split("@")[0]}
                 </li>
+                {user.isAdmin && (
+                  <li>
+                    <NavLink
+                      to="/admin"
+                      className={isActive}
+                      onClick={() => setOpen(false)}
+                    >
+                      Admin
+                    </NavLink>
+                  </li>
+                )}
                 <li>
                   <button
                     onClick={() => {
                       setOpen(false);
-                      signOut();
+                      signout();
                     }}
                     className={link}
                   >

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart, getUnitPrice } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import { fetchJson } from "@/lib/api";
 
 type Address = {
   email: string;
@@ -10,6 +12,8 @@ type Address = {
   line1: string;
   city: string;
   zip: string;
+  dui: string;
+  phone: string;
   sameForInvoice: boolean;
 };
 
@@ -28,25 +32,26 @@ const KNOWN_CODES: Record<string, number> = {
 
 export default function Checkout() {
   const { items, subtotal, clear } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
-
   useEffect(() => {
-    if (!token) {
+    if (!user) {
       navigate("/signin?next=/checkout");
     }
-  }, [token, navigate]);
+  }, [user, navigate]);
 
   // --------- ADDRESS ----------
   const [addr, setAddr] = useState<Address>({
     email: "",
-    country: "US",
+    country: "SV",
     firstName: "",
     lastName: "",
     line1: "",
     city: "",
     zip: "",
+    dui: "",
+    phone: "",
     sameForInvoice: false,
   });
 
@@ -83,22 +88,18 @@ export default function Checkout() {
 
   async function submitOrder(e: React.FormEvent) {
     e.preventDefault();
-    if (!token) return;
+    if (!user) return;
 
-    if (!addr.email || !addr.firstName || !addr.lastName || !addr.line1 || !addr.city || !addr.zip || !addr.country) {
-      setErr("Please complete all required fields.");
+    if (!addr.email || !addr.firstName || !addr.lastName || !addr.line1 || !addr.city || !addr.zip || !addr.country || !addr.dui || !addr.phone) {
+      setErr("Por favor complete todos los campos requeridos.");
       return;
     }
 
     setLoading(true);
     setErr(null);
     try {
-      const res = await fetch("/api/orders", {
+      const order = await fetchJson("/api/orders", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({
           items: items.map((it) => ({ productId: it.product.id, qty: it.qty })),
           address: {
@@ -111,11 +112,6 @@ export default function Checkout() {
           clientTotal: total,
         }),
       });
-      if (!res.ok) {
-        const j = await res.json().catch(() => ({}));
-        throw new Error(j.error || `Request failed (${res.status})`);
-      }
-      const order = await res.json();
       clear();
       navigate(`/order/${order.id}`);
     } catch (e: any) {
@@ -180,23 +176,42 @@ export default function Checkout() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <input
                   className="rounded-lg border px-3 py-2"
-                  placeholder="First Name"
+                  placeholder="Nombre"
                   value={addr.firstName}
                   onChange={(e) => setAddr({ ...addr, firstName: e.target.value })}
                   required
                 />
                 <input
                   className="rounded-lg border px-3 py-2"
-                  placeholder="Last Name"
+                  placeholder="Apellido"
                   value={addr.lastName}
                   onChange={(e) => setAddr({ ...addr, lastName: e.target.value })}
                   required
                 />
               </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <input
+                  className="rounded-lg border px-3 py-2"
+                  placeholder="DUI (ej: 12345678-9)"
+                  value={addr.dui}
+                  onChange={(e) => setAddr({ ...addr, dui: e.target.value })}
+                  required
+                  pattern="[0-9]{8}-[0-9]"
+                  title="Formato: 12345678-9"
+                />
+                <input
+                  className="rounded-lg border px-3 py-2"
+                  placeholder="Teléfono"
+                  value={addr.phone}
+                  onChange={(e) => setAddr({ ...addr, phone: e.target.value })}
+                  required
+                />
+              </div>
+
               <input
                 className="rounded-lg border px-3 py-2"
-                placeholder="Address"
+                placeholder="Dirección"
                 value={addr.line1}
                 onChange={(e) => setAddr({ ...addr, line1: e.target.value })}
                 required
@@ -205,14 +220,14 @@ export default function Checkout() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <input
                   className="rounded-lg border px-3 py-2"
-                  placeholder="City"
+                  placeholder="Ciudad"
                   value={addr.city}
                   onChange={(e) => setAddr({ ...addr, city: e.target.value })}
                   required
                 />
                 <input
                   className="rounded-lg border px-3 py-2"
-                  placeholder="Postal Code"
+                  placeholder="Código Postal"
                   value={addr.zip}
                   onChange={(e) => setAddr({ ...addr, zip: e.target.value })}
                   required

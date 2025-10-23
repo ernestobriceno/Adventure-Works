@@ -11,7 +11,8 @@ import SignUp from "@/pages/SignUp";
 import ForgotPassword from "@/pages/ForgotPassword";
 import Checkout from "@/pages/Checkout";
 import OrderSuccess from "@/pages/OrderSuccess";
-import ProductDetail from "@/pages/ProductDetail"; // <-- NUEVO
+import ProductDetail from "@/pages/ProductDetail";
+import AdminDashboard from "@/pages/AdminDashboard";
 import Footer from "@/components/Footer";
 
 export default function App() {
@@ -32,7 +33,8 @@ export default function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order/:id" element={<OrderSuccess />} />
-          <Route path="/product/:id" element={<ProductDetail />} /> {/* <-- NUEVA */}
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </main>
 
